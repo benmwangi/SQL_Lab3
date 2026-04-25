@@ -112,7 +112,7 @@ ORDER BY totalunits DESC
 df_total_customers = pd.read_sql("""
 SELECT productName,
 productCode,
-COUNT(DISTINCT customerNumber) AS numPurchasers
+COUNT(DISTINCT customerNumber) AS numpurchasers
 FROM products
 JOIN orderdetails
 USING(productCode)
