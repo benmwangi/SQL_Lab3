@@ -11,7 +11,7 @@ conn = sqlite3.connect('data.sqlite')
 # CodeGrade step1
 # Replace None with your code
 df_boston = pd.read_sql("""
-SELECT firstName,lastName,jobTitle
+SELECT firstName,jobTitle
 FROM employees
 JOIN offices
 USING(officeCode)
@@ -111,6 +111,7 @@ ORDER BY totalunits DESC
 # Replace None with your code
 df_total_customers = pd.read_sql("""
 SELECT productName,
+productCode,
 COUNT(DISTINCT customerNumber) AS numPurchasers
 FROM products
 JOIN orderdetails
@@ -141,11 +142,13 @@ df_under_20 = pd.read_sql("""
 SELECT  employeeNumber,
 firstName,
 lastName,
-offices.city,
+o.city,
 officeCode
-FROM employees
-JOIN offices
+FROM employees AS e
+JOIN offices AS o
 USING(officeCode)
+JOIN customers AS c
+ON e.employeeNumber = c.salesRepEmployeeNumber
 WHERE EXISTS (
     SELECT productName,
     COUNT(DISTINCT customerNumber) AS numPurchasers
@@ -157,7 +160,8 @@ WHERE EXISTS (
     GROUP BY productName
     HAVING numPurchasers < 20
 )
-GROUP BY employeeNumber;
+GROUP BY employeeNumber
+ORDER BY lastName;
 """,conn)
 
 # Run this cell without changes
